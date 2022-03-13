@@ -84,6 +84,7 @@ def bake_target(context, target: str, lst: list[NodeData]) -> bpy.types.Image:
     # ベイク
     bake_type = "DIFFUSE" if target == "Base Color" else target.upper()
     bpy.ops.object.bake(type=bake_type)
+    img.file_format = "JPEG"
     img.pack()
     for nd in lst:
         nd.node_tree.nodes.remove(nd.image_node)
