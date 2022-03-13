@@ -18,7 +18,7 @@ Select an object and press the button "Bake" to perform the following process.
 
 ## Usage
 
-- Select the object.
+- Select the object with a material.
 - Show the sidebar and select the Edit tab.
 - Set the image width and height.
 - Press the button "Bake".
