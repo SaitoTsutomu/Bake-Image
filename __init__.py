@@ -9,6 +9,7 @@ Prerequisite
 - Named "Principled BSDF" node must exist.
 - UV Map must not stick out.
 """
+import os
 from dataclasses import dataclass
 from typing import Iterator
 
@@ -84,8 +85,13 @@ def bake_target(context, target: str, lst: list[NodeData]) -> bpy.types.Image:
     # ベイク
     bake_type = "DIFFUSE" if target == "Base Color" else target.upper()
     bpy.ops.object.bake(type=bake_type)
+    # 一度JPEGファイルで保存して開き直し、パックしてJPEGファイルを削除
     img.file_format = "JPEG"
+    img.filepath_raw = f"//{img.name}.jpg"
+    img.save()
+    bpy.ops.image.open(filepath=img.filepath_raw)
     img.pack()
+    os.remove(img.filepath_from_user())
     for nd in lst:
         nd.node_tree.nodes.remove(nd.image_node)
     return img
