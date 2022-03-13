@@ -20,7 +20,7 @@ bl_info = {
     "version": (1, 0),  # バージョン
     "blender": (3, 1, 0),  # 動作可能なBlenderバージョン
     "support": "COMMUNITY",  # サポートレベル
-    "category": "3D View",  # カテゴリ名
+    "category": "Object",  # カテゴリ名
     "description": "Bake image",  # 説明文
     "location": "Object: Bake Image",  # 機能の位置付け
     "warning": "",  # 注意点やバグ情報
@@ -65,16 +65,17 @@ def get_node_data(obj: bpy.types.Object, input_name: str) -> Iterator[NodeData]:
                         yield NodeData(mat, bsdf, None)
 
 
-def bake_target(target: str, lst: list[NodeData]) -> bpy.types.Image:
+def bake_target(context, target: str, lst: list[NodeData]) -> bpy.types.Image:
     """ベイク
 
+    :param context: コンテキスト
     :param target: 画像種類
     :param lst: NodeDataのリスト
     :return: 作成した画像
     """
     # 新規画像作成
     name = f"{lst[0].material.name}_{target.split()[-1].lower()}"
-    img = bpy.data.images.new(name, bpy.context.scene.width, bpy.context.scene.height)
+    img = bpy.data.images.new(name, context.scene.width, context.scene.height)
     for nd in lst:
         # 画像テクスチャノード作成
         nd.image_node = nd.node_tree.nodes.new(type="ShaderNodeTexImage")
@@ -95,17 +96,17 @@ class CBI_OT_bake(bpy.types.Operator):
 
     def execute(self, context):
         # ベイクの設定
-        render = bpy.context.scene.render
+        render = context.scene.render
         render.engine = "CYCLES"
         render.bake.use_pass_direct = False
         render.bake.use_pass_indirect = False
         render.bake.use_pass_color = True
         render.bake.use_selected_to_active = False
-        obj = bpy.context.active_object
+        obj = context.active_object
         tt = ["Base Color", "Roughness", "Normal"]
         dct = {t: [lst, None] for t in tt if (lst := list(get_node_data(obj, t)))}
         for target, lsts in dct.items():
-            lsts[1] = bake_target(target, lsts[0])
+            lsts[1] = bake_target(context, target, lsts[0])
         for target, lsts in dct.items():
             for nd in lsts[0]:
                 nodes = nd.node_tree.nodes
