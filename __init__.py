@@ -10,6 +10,7 @@ Prerequisite
 - UV Map must not stick out.
 """
 import os
+import tempfile
 from dataclasses import dataclass
 from typing import Iterator
 
@@ -87,7 +88,7 @@ def bake_target(context, target: str, lst: list[NodeData]) -> bpy.types.Image:
     bpy.ops.object.bake(type=bake_type)
     # 一度JPEGファイルで保存して開き直し、パックしてJPEGファイルを削除
     img.file_format = "JPEG"
-    img.filepath_raw = f"//{img.name}.jpg"
+    img.filepath_raw = f"{tempfile.gettempdir()}/{img.name}.jpg"
     img.save()
     bpy.ops.image.open(filepath=img.filepath_raw)
     img.pack()
