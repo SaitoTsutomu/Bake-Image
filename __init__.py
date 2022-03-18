@@ -60,8 +60,8 @@ def get_node_data(obj: bpy.types.Object, input_name: str) -> Iterator[NodeData]:
             if bsdf := mat.node_tree.nodes.get("Principled BSDF"):
                 if links := bsdf.inputs[input_name].links:
                     if links[0].from_node.type != "TEX_IMAGE":
-                        if links[0].from_node.type == "BUMP":
-                            if links := links[0].from_node.inputs["Height"].links:
+                        if links[0].from_node.type == "NORMAL_MAP":
+                            if links := links[0].from_node.inputs["Color"].links:
                                 if links[0].from_node.type == "TEX_IMAGE":
                                     continue
                         yield NodeData(mat, bsdf, None)
@@ -123,9 +123,10 @@ class CBI_OT_bake(bpy.types.Operator):
                 image_node.image = lsts[1]
                 # ベイク画像に変更
                 if target == "Normal":
-                    bump_node = nodes.get("Bump") or nodes.new(type="ShaderNodeBump")
-                    nd.node_tree.links.new(image_node.outputs["Color"], bump_node.inputs["Height"])
-                    nd.node_tree.links.new(bump_node.outputs[target], nd.bsdf.inputs[target])
+                    image_node.image.colorspace_settings.name = "Non-Color"
+                    nmlmp_node = nodes.get("Normal Map") or nodes.new(type="ShaderNodeNormalMap")
+                    nd.node_tree.links.new(image_node.outputs["Color"], nmlmp_node.inputs["Color"])
+                    nd.node_tree.links.new(nmlmp_node.outputs[target], nd.bsdf.inputs[target])
                 else:
                     nd.node_tree.links.new(image_node.outputs["Color"], nd.bsdf.inputs[target])
         self.report({"INFO"}, "Done" if dct else "Nothing")
