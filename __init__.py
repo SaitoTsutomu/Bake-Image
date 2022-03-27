@@ -138,6 +138,7 @@ class CBI_PT_bake(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Edit"
+    bl_context = "objectmode"
 
     @classmethod
     def poll(cls, context):
