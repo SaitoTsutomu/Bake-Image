@@ -24,7 +24,7 @@ bl_info = {
     "support": "TESTING",  # サポートレベル
     "category": "Object",  # カテゴリ名
     "description": "Bake image",  # 説明文
-    "location": "Object: Bake Image",  # 機能の位置付け
+    "location": "View3D > Sidebar > Edit Tab",  # 場所
     "warning": "",  # 注意点やバグ情報
     "doc_url": "https://github.com/SaitoTsutomu/Bake-Image",  # ドキュメントURL
 }
