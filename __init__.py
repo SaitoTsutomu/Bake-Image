@@ -21,7 +21,7 @@ bl_info = {
     "author": "tsutomu",  # 制作者名
     "version": (1, 0),  # バージョン
     "blender": (3, 1, 0),  # 動作可能なBlenderバージョン
-    "support": "COMMUNITY",  # サポートレベル
+    "support": "TESTING",  # サポートレベル
     "category": "Object",  # カテゴリ名
     "description": "Bake image",  # 説明文
     "location": "Object: Bake Image",  # 機能の位置付け
