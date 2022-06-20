@@ -23,6 +23,10 @@ Select an object and press the button "Bake" to perform the following process.
 - Set the image width and height.
 - Press the button "Bake".
 
+When use_selected_to_active is checked, set the active object as follows.
+- One material_slots
+- Empty Base Color
+
 ## Introductory Article
 
 - [Blenderで自動ベイク - Qiita](https://qiita.com/SaitoTsutomu/items/f95fcc7b58f22b872bcf)

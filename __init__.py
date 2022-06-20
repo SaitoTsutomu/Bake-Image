@@ -102,6 +102,9 @@ class CBI_OT_bake(bpy.types.Operator):
     bl_idname = "object.bake_operator"
     bl_label = "Bake"
 
+    use_selected_to_active: bpy.props.BoolProperty()
+    cage_extrusion: bpy.props.FloatProperty()
+
     def execute(self, context):
         # ベイクの設定
         render = context.scene.render
@@ -109,10 +112,18 @@ class CBI_OT_bake(bpy.types.Operator):
         render.bake.use_pass_direct = False
         render.bake.use_pass_indirect = False
         render.bake.use_pass_color = True
-        render.bake.use_selected_to_active = False
+        render.bake.use_selected_to_active = self.use_selected_to_active
+        render.bake.cage_extrusion = self.cage_extrusion
         obj = context.active_object
         tt = ["Base Color", "Roughness", "Normal"]
         dct = {t: [lst, None] for t in tt if (lst := list(get_node_data(obj, t)))}
+        if not dct and self.use_selected_to_active:
+            if obj.material_slots:
+                mat = obj.material_slots[0].material
+                if mat and mat.use_nodes:
+                    if bsdf := mat.node_tree.nodes.get("Principled BSDF"):
+                        dct = {tt[0]: [[NodeData(mat, bsdf, None)], None]}
+
         for target, lsts in dct.items():
             lsts[1] = bake_target(context, target, lsts[0])
         for target, lsts in dct.items():
@@ -148,7 +159,11 @@ class CBI_PT_bake(bpy.types.Panel):
     def draw(self, context):
         self.layout.prop(context.scene, "width")
         self.layout.prop(context.scene, "height")
-        self.layout.operator(CBI_OT_bake.bl_idname, text=CBI_OT_bake.bl_label)
+        self.layout.prop(context.scene, "use_selected_to_active")
+        self.layout.prop(context.scene, "cage_extrusion")
+        prop = self.layout.operator(CBI_OT_bake.bl_idname, text=CBI_OT_bake.bl_label)
+        prop.use_selected_to_active = context.scene.use_selected_to_active
+        prop.cage_extrusion = context.scene.cage_extrusion
 
 
 ui_classes = (
@@ -162,6 +177,8 @@ def register():
         bpy.utils.register_class(ui_class)
     bpy.types.Scene.width = bpy.props.IntProperty(default=1024)
     bpy.types.Scene.height = bpy.props.IntProperty(default=1024)
+    bpy.types.Scene.use_selected_to_active = bpy.props.BoolProperty(default=False)
+    bpy.types.Scene.cage_extrusion = bpy.props.FloatProperty(default=0.01)
 
 
 def unregister():
@@ -169,6 +186,8 @@ def unregister():
         bpy.utils.unregister_class(ui_class)
     del bpy.types.Scene.width
     del bpy.types.Scene.height
+    del bpy.types.Scene.use_selected_to_active
+    del bpy.types.Scene.cage_extrusion
 
 
 if __name__ == "__main__":
