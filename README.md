@@ -8,7 +8,7 @@ Select an object and press the button "Bake" to perform the following process.
 
 ## Installation
 
-- Download https://github.com/SaitoTsutomu/Bake-Image/archive/refs/heads/main.zip
+- Download https://github.com/SaitoTsutomu/Bake-Image/archive/refs/heads/master.zip
 - Start Blender.
 - Edit menu -> Preferences
   - Select the "Add-ons" tab.
